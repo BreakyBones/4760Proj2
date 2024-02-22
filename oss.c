@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/time.h>
+#include <process.h>
 
 
 // Set up the PCB according to what was given in the instructions
@@ -29,8 +30,8 @@ static void myHandler(int s) {
 
 static int setupinterrupt (void) {
     struct sigaction act;
-    act.sa handler = myHandler;
-    act.sa flags = 0;
+    act.sa_handler = myHandler;
+    act.sa_flags = 0;
 
     return(sigemptyset(&act.sa_mask) || sigaction(SIGINT , &act, NULL) || sigaction(SIGPROF , &act , NULL));
 }
