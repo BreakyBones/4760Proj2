@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/time.h>
-#include <process.h>
+
 
 
 // Set up the PCB according to what was given in the instructions
