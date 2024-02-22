@@ -28,6 +28,7 @@ static void myHandler(int s) {
     exit(1);
 }
 
+// Set up myHandler
 static int setupinterrupt (void) {
     struct sigaction act;
     act.sa_handler = myHandler;
