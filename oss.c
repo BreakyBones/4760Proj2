@@ -1,12 +1,8 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/shm.h>
-#include <sys/ipc.h>
-#include <string.h>
-#include <time.h>
+#include <errno.h>
 #include <signal.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/time.h>
 
 
 // Set up the PCB according to what was given in the instructions
@@ -18,7 +14,7 @@ struct PCB {
 };
 
 // Shared memory Key
-const int sh_key 205569;
+const int sh_key = 205569;
 
 // Variables
 int* sysClock;
@@ -33,7 +29,7 @@ static void myHandler(int s) {
 
 static int setupinterrupt (void) {
     struct sigaction act;
-    act.sa handler = myHandler();
+    act.sa handler = myHandler;
     act.sa flags = 0;
 
     return(sigemptyset(&act.sa_mask) || sigaction(SIGINT , &act, NULL) || sigaction(SIGPROF , &act , NULL));
@@ -54,7 +50,7 @@ void print_usage(const char *progName) {
     printf("-n: stands for the total number of workers to launch\n");
     printf("-s: Defines how many workers are allowed to run simultaneously\n");
     printf("-t: The time limit to pass to the workers\n");
-    printf("-i: How often a worker should be launched")
+    printf("-i: How often a worker should be launched");
 }
 
 int main(int argc, char *argv[]) {
