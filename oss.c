@@ -4,7 +4,9 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include <stdlib.h>
-
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
 
 // Set up the PCB according to what was given in the instructions
 struct PCB {
@@ -84,7 +86,7 @@ int main(int argc, char *argv[]) {
     struct timespec *system_clock;
 
     // Create or get the shared memory segment
-    shm_id = shmget(KEY, SHM_SIZE, IPC_CREAT | 0666);
+    shm_id = shmget(sh_key, sh_size, IPC_CREAT|0666);
     if (shm_id == -1) {
         perror("Error creating/getting shared memory");
         return 1;
