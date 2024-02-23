@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
     // TESTING SYSTEM CLOCK USAGE
     int run = 1;
     while (run == 1) {
-        incrementClock(&system_clock , 1);
+        incrementClock(&system_clock , 1000);
         if (system_clock.tv_sec == 5) {
             printf("Reached 5 second\n");
             run = 0;
