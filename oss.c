@@ -14,15 +14,23 @@ struct PCB {
     int startNano;
 };
 
-// Shared memory Key
+struct PCB processTable[20];
+
+// Shared memory Key just an arbitrary number I picked
 const int sh_key = 205569;
 
-// Variables
-int* sysClock;
-int proc, simul;
-int clockSmh;
-char* timeLimit;
+// clock incrementation
+// discovered timespec online through a question asking about simulating a clock
+void incrementClock(struct timespec *current_time, long nanoseconds) {
+    current_time->tv_nsec += nanoseconds;
 
+    if (current_time->tv_nsec >= 1000000000) {
+        current_time->tv_sec += (current_time->tv_nsec / 1000000000);
+        current_time->tv_nsec %= 1000000000;
+    }
+}
+
+// Set up the failsafe shutdown
 static void myHandler(int s) {
     printf("Got signal %d, terminate!\n" , s);
     exit(1);
@@ -37,7 +45,7 @@ static int setupinterrupt (void) {
     return(sigemptyset(&act.sa_mask) || sigaction(SIGINT , &act, NULL) || sigaction(SIGPROF , &act , NULL));
 }
 
-static int setupitimer(void) { /* set ITIMER_PROF for 2-second intervals */
+static int setupitimer(void) { /* set ITIMER_PROF for 60-second intervals */
     struct itimerval value;
     value.it_interval.tv_sec = 60;
     value.it_interval.tv_usec = 0;
@@ -56,6 +64,8 @@ void print_usage(const char *progName) {
 }
 
 int main(int argc, char *argv[]) {
+
+
     if (setupinterrupt() == -1) {
         perror("Failed to set up handler for SIGPROF");
         return 1;
@@ -64,5 +74,20 @@ int main(int argc, char *argv[]) {
         perror("Failed to set up ITIMER_PROF interval timer");
         return 1;
     }
-    for ( ; ; );
+
+
+    // TEST: INFINITE LOOP TO TEST CLOCK DELETE THIS LATER
+
+    // initialize the system clock
+    struct timespec system_clock = {0 ,0};
+
+    // TESTING SYSTEM CLOCK USAGE
+    int run = 1;
+    while (run == 1) {
+        incrementClock(&system_clock , 1);
+        if (system_clock.tv_sec == 5) {
+            printf("Reached 5 second\n");
+            run = 0;
+        }
+    }
 }
