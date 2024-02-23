@@ -124,6 +124,8 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+    wait(NULL);
+
     // Detach the shared memory segment
     if (shmdt(system_clock) == -1) {
         perror("Error detaching shared memory");
