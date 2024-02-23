@@ -18,6 +18,7 @@ struct PCB processTable[20];
 
 // Shared memory Key just an arbitrary number I picked
 const int sh_key = 205569;
+const int sh_size = sizeof(struct timespec);
 
 // clock incrementation
 // discovered timespec online through a question asking about simulating a clock
@@ -79,10 +80,28 @@ int main(int argc, char *argv[]) {
     // TEST: INFINITE LOOP TO TEST CLOCK DELETE THIS LATER
 
     // initialize the system clock
-    struct timespec system_clock = {0 ,0};
+    int shm_id;
+    struct timespec *system_clock;
+
+    // Create or get the shared memory segment
+    shm_id = shmget(KEY, SHM_SIZE, IPC_CREAT | 0666);
+    if (shm_id == -1) {
+        perror("Error creating/getting shared memory");
+        return 1;
+    }
+
+    // Attach the shared memory segment to the address space
+    system_clock = (struct timespec *)shmat(shm_id, NULL, 0);
+    if (system_clock == (struct timespec *)(-1)) {
+        perror("Error attaching shared memory");
+        return 1;
+    }
 
     // TESTING SYSTEM CLOCK USAGE
     int run = 1;
+
+
+
     while (run == 1) {
         incrementClock(&system_clock , 5);
         if (system_clock.tv_sec == 5) {
@@ -90,4 +109,18 @@ int main(int argc, char *argv[]) {
             run = 0;
         }
     }
+
+    // Detach the shared memory segment
+    if (shmdt(system_clock) == -1) {
+        perror("Error detaching shared memory");
+        return 1;
+    }
+
+    // Remove the shared memory segment (optional)
+    if (shmctl(shm_id, IPC_RMID, NULL) == -1) {
+        perror("Error removing shared memory");
+        return 1;
+    }
+
+    return 0;
 }
