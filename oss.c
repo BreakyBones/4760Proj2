@@ -7,6 +7,7 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <sys/wait.h>
 
 // Set up the PCB according to what was given in the instructions
 struct PCB {
@@ -124,7 +125,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    waitpid(NULL);
+    wait(NULL);
 
     // Detach the shared memory segment
     if (shmdt(system_clock) == -1) {
