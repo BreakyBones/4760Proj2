@@ -64,11 +64,20 @@ void print_usage(const char *progName) {
     printf("-n: stands for the total number of workers to launch\n");
     printf("-s: Defines how many workers are allowed to run simultaneously\n");
     printf("-t: The time limit to pass to the workers\n");
-    printf("-i: How often a worker should be launched");
+    printf("-i: How often a worker should be launched (in milliseconds)\n");
 }
 
 int main(int argc, char *argv[]) {
 
+    // Opt variable and Opt String
+    char opt;
+    const char optstr[] = "hn:s:t:i:";
+
+    // Variables to hold values from Optstr
+    int arg_n = 0;
+    int arg_s = 0;
+    char *arg_t;
+    int arg_i = 0;
 
     if (setupinterrupt() == -1) {
         perror("Failed to set up handler for SIGPROF");
@@ -100,43 +109,70 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    // TESTING SYSTEM CLOCK USAGE
-    int run = 1;
+    // TEST: SYSTEM CLOCK USAGE DELETE THIS LATER
 
-
-
-    while (run == 1) {
-        incrementClock(system_clock , 5);
-        if (system_clock->tv_sec == 5) {
-            run = 0;
+    // OPTARGS
+    while ((opt = getopt(argc, argv, optstr)) != -1) {
+        switch (opt) {
+            case 'h':
+                print_usage(argv[0]);
+                return(EXIT_SUCCESS);
+            case 'n':
+                arg_n = atoi(optarg);
+                break;
+            case 's':
+                arg_s = atoi(optarg);
+                break;
+            case 't':
+                arg_t = optarg;
+                break;
+            case 'i':
+                arg_i = atoi(optarg);
+                break;
+            case '?':
+                print_usage(argv[0]);
+                break;
+            default:
+                printf("Invalid option %c\n" , optopt);
+                print_usage(argv[0]);
+                return (EXIT_FAILURE);
         }
     }
 
-    pid_t child_pid = fork();
+    // Check if all argument were provided for use
+    if (arg_n <= 0 || arg_s <= 0 || arg_t <= 0 || arg_i <= 0) {
+        printf("All arguments are required\n");
+        print_usage(argv[0]);
 
-    if (child_pid == -1) {
-        perror("Error Forking");
-        return 1;
+        return(EXIT_FAILURE);
     }
 
-    if (child_pid == 0) {
-        execlp("./worker", "worker", NULL);
-        perror("Error executing worker.c");
-        return 1;
+    // Keep the iterator low to prevent confusion and time lag on OpSyS server
+    if (atoi(arg_t) > 10) {
+        printf("Please keep your time limit for workers between 0 and 10 seconds to reduce time strain");
+
+        return (EXIT_FAILURE);
+    }
+    // Keep the number of simultaneous processes low to reduce lag on OpSys server
+    if (arg_s > 20) {
+        printf("Please keep the simultaneous number of processes below 20");
+
+        return(EXIT_FAILURE);
     }
 
-    wait(NULL);
+    // TEST: GETOPT GRABS DELETE THIS LATER
+    printf("arg_n: %d\n arg_s: %d\n arg_t: %s\n arg_i: %d\n" , arg_n , arg_s , arg_t , arg_i);
 
     // Detach the shared memory segment
     if (shmdt(system_clock) == -1) {
         perror("Error detaching shared memory");
-        return 1;
+        return(EXIT_FAILURE);
     }
 
     // Remove the shared memory segment
     if (shmctl(shm_id, IPC_RMID, NULL) == -1) {
         perror("Error removing shared memory");
-        return 1;
+        return(EXIT_FAILURE);
     }
 
     return 0;
