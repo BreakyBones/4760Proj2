@@ -103,8 +103,8 @@ int main(int argc, char *argv[]) {
 
 
     while (run == 1) {
-        incrementClock(&system_clock , 5);
-        if (system_clock.tv_sec == 5) {
+        incrementClock(system_clock , 5);
+        if (system_clock->tv_sec == 5) {
             printf("Reached 5 second\n");
             run = 0;
         }
