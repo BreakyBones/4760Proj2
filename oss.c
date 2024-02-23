@@ -107,9 +107,21 @@ int main(int argc, char *argv[]) {
     while (run == 1) {
         incrementClock(system_clock , 5);
         if (system_clock->tv_sec == 5) {
-            printf("Reached 5 second\n");
             run = 0;
         }
+    }
+
+    pid_t child_pid = fork();
+
+    if (child_pid == -1) {
+        perror("Error Forking");
+        return 1;
+    }
+
+    if (child_pid == 0) {
+        execlp("./worker", "worker", NULL);
+        perror("Error executing worker.c");
+        return 1;
     }
 
     // Detach the shared memory segment
@@ -118,7 +130,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    // Remove the shared memory segment (optional)
+    // Remove the shared memory segment
     if (shmctl(shm_id, IPC_RMID, NULL) == -1) {
         perror("Error removing shared memory");
         return 1;
