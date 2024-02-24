@@ -15,6 +15,10 @@ int main(int argc, char *argv[]) {
     int shm_id;
     struct timespec *system_clock;
 
+    // Arguments
+    int runtimeS = (int) (system_clock->tv_sec + (argv[1]));
+    int runtimeNs = (int) (system_clock->tv_nsec + (argv[2]));
+
     shm_id = shmget(sh_key, sh_size, 0666);
     if (shm_id == -1) {
         perror("Error getting shared memory");
@@ -27,9 +31,23 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    // Access and use the system clock in shared memory
-    printf("Worker Process - Seconds: %ld\n", system_clock->tv_sec);
-    printf("Worker Process - Nanoseconds: %ld\n", system_clock->tv_nsec);
+    // Print Starting Line
+    printf("WORKER PID:%d PPID%d SysClockS: %lld SysClockNano: %ld TermTimeS: %d TermTimeNano: %d\n --Just Starting\n" , getpid() , getppid() , system_clock->tv_sec, system_clock->tv_nsec, runtimeS, runtimeNs);
+
+
+    int shutdown = 0;
+    int currentTime = system_clock->tv_sec;
+    int secondTracker = 0;
+    while(shutdown) {
+
+        if (runtimeS - system_clock->tv_sec <= 0 && runtimeNs - system_clock->tv_nsec <= 0) {
+            printf("WORKER PID:%d PPID%d SysClockS: %lld SysClockNano: %ld TermTimeS: %d TermTimeNano: %d\n --Terminating\n" , getpid() , getppid() , system_clock->tv_sec, system_clock->tv_nsec, runtimeS, runtimeNs);
+        } else if (system_clock->tv_sec - currentTime == 1) {
+            secondTracker++;
+            currentTime = system_clock->tv_sec;
+            printf("WORKER PID:%d PPID%d SysClockS: %lld SysClockNano: %ld TermTimeS: %d TermTimeNano: %d\n --%d second(s) have passed since starting\n" , getpid() , getppid() , system_clock->tv_sec, system_clock->tv_nsec, runtimeS, runtimeNs, secondTracker);
+        }
+    }
 
     // Detach the shared memory segment
     if (shmdt(system_clock) == -1) {

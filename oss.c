@@ -128,6 +128,7 @@ int main(int argc, char *argv[]) {
                 break;
             case 'i':
                 arg_i = atoi(optarg);
+                arg_i *= 1000000;
                 break;
             case '?':
                 print_usage(argv[0]);
