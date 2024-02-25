@@ -175,7 +175,14 @@ int main(int argc, char *argv[]) {
     snprintf(rand_tNs_str, sizeof(rand_tNs_str), "%d" , rand_tNs);
 
     // TEST: print out the randomized seconds and nanoseconds
-    printf("TESTING Seconds: %s\nNanoseconds: %s" , rand_tS_str , rand_tNs_str);
+
+    // Pass to forked Worker
+    pid_t childPid = fork();
+
+    if (childPid == 0) {
+        char* args[] = {"./worker" , rand_tS_str , rand_tNs_str , 0};
+        execvp(args[0] , args);
+    }
 
     // Detach the shared memory segment
     if (shmdt(system_clock) == -1) {
