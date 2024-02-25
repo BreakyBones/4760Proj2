@@ -207,8 +207,9 @@ int main(int argc, char *argv[]) {
         //check for child termination
         int pid = waitpid(-1 , &status, WNOHANG);
         if (pid > 0) {
-
+            activeUsers--;
         }
+        usleep(100);
     }
 
 
