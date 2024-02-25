@@ -166,7 +166,7 @@ int main(int argc, char *argv[]) {
     int activeUsers = 0;
     int activeChildren = 1;
     while (activeChildren) {
-        system_clock[1] += 10;
+        system_clock[1] += 10000;
         if (system_clock[1] >= 1000000000) {
             system_clock[0]++;
             system_clock[1] -= 1000000000;
