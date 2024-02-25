@@ -74,7 +74,8 @@ int main(int argc, char *argv[]) {
     int arg_s = 0;
     char *arg_t;
     int arg_i = 0;
-
+    int arg_iS = 0;
+    int arg_iN = 0;
 
     if (setupinterrupt() == -1) {
         perror("Failed to set up handler for SIGPROF");
@@ -106,7 +107,12 @@ int main(int argc, char *argv[]) {
                 break;
             case 'i':
                 arg_i = atoi(optarg);
-                arg_i *= 1000000;
+                arg_iN = 1000000 * arg_i;
+                arg_iS = 0;
+                if (arg_iN >= 1000000000) {
+                    arg_iS = arg_iN/1000000000;
+                    arg_iN %= 1000000000;
+                }
                 break;
             case '?':
                 print_usage(argv[0]);
@@ -171,11 +177,10 @@ int main(int argc, char *argv[]) {
     int workerLaunch = 0;
     int activeWorkers = 0;
     int activeChildren = 1;
-    int releaseTimeS = system_clock[0];
-    int releaseTimeN = system_clock[1] + arg_i;
-    if (releaseTimeN >= 1000000000) {
-        releaseTimeS += (releaseTimeN/1000000000);
-    }
+
+    int releaseTimeS = system_clock[0] + arg_iS;
+    int releaseTimeN = system_clock[1] + arg_iN;
+
     while (activeChildren) {
         system_clock[1] += 1000;
         if (system_clock[1] >= 1000000000) {
@@ -190,11 +195,8 @@ int main(int argc, char *argv[]) {
             }
         }
         if (activeWorkers < arg_s && (system_clock[0] >= releaseTimeS && system_clock[1] >= releaseTimeN)) {
-            releaseTimeS = system_clock[0];
-            releaseTimeN = system_clock[1] + arg_i;
-            if (releaseTimeN >= 1000000000) {
-                releaseTimeS++;
-            }
+            releaseTimeS = system_clock[0] + arg_iS;
+            releaseTimeN = system_clock[1] + arg_iN;
             pid_t workPid = fork();
             if (workPid == 0) {
                 // Randomize the outgoing seconds and nanoseconds
