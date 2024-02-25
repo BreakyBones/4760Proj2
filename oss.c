@@ -26,13 +26,12 @@ const int sh_key = 205569;
 
 
 // clock incrementation
-// discovered timespec online through a question asking about simulating a clock
-void incrementClock(struct timespec *current_time, long nanoseconds) {
-    current_time->tv_nsec += nanoseconds;
-
-    if (current_time->tv_nsec >= 1000000000) {
-        current_time->tv_sec += (current_time->tv_nsec / 1000000000);
-        current_time->tv_nsec %= 1000000000;
+int* system_clock;
+void incrementClock(int* clock , int nano) {
+    clock[1] += nano;
+    if (clock[1] >= 1000000000) {
+        clock[0] ++;
+        clock[1] -= 1000000000;
     }
 }
 
@@ -98,7 +97,7 @@ int main(int argc, char *argv[]) {
 
     // initialize the system clock
     int shm_id;
-    struct timespec *system_clock;
+
 
     // Create or get the shared memory segment
     shm_id = shmget(sh_key, sizeof(int) * 2, 0644 | IPC_CREAT);
@@ -108,8 +107,8 @@ int main(int argc, char *argv[]) {
     }
 
     // Attach the shared memory segment to the address space
-    system_clock = (struct timespec *)shmat(shm_id, 0, 0);
-    if (system_clock == (struct timespec *)(-1)) {
+    system_clock = (int*)shmat(shm_id, 0, 0);
+    if (system_clock == (void *)(-1)) {
         perror("Error attaching shared memory");
         return 1;
     }
@@ -173,12 +172,12 @@ int main(int argc, char *argv[]) {
     // Pass to forked Worker and setup clock
     int workerLaunch = 0;
     int activeUsers = 0;
-    system_clock->tv_sec = 0;
-    system_clock->tv_nsec = 0;
+    system_clock[0] = 0;
+    system_clock[1] = 0;
 
     while (workerLaunch < arg_n) {
         incrementClock(system_clock , 10);
-        if (system_clock->tv_nsec % 500000000 == 0) {
+        if (system_clock[1] % 500000000 == 0) {
             printf("Process Table Goes Here");
         }
         if (activeUsers < arg_s) {
