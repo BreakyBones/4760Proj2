@@ -173,6 +173,7 @@ int main(int argc, char *argv[]) {
     int activeUsers = 0;
     int activeChildren = 1;
     while (activeChildren) {
+        printf("ticking clock");
         incrementClock(system_clock , 10);
         if (system_clock[1] % 500000000 == 0) {
             printf("Process Table Goes Here");
@@ -211,6 +212,8 @@ int main(int argc, char *argv[]) {
             activeUsers--;
             if (workerLaunch >= arg_n || activeUsers == 0) {
                 activeChildren = 0;
+                printf("Exiting\n");
+                break;
             }
         }
     }
