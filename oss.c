@@ -218,11 +218,11 @@ int main(int argc, char *argv[]) {
                         pcb[i].pid = workPid;
                         pcb[i].startSeconds = system_clock[0];
                         pcb[i].startNano = system_clock[1];
-                        activeWorkers++;
-                        workerLaunch++;
                         break;
                     }
                 }
+                activeWorkers++;
+                workerLaunch++;
             }
         }
 
