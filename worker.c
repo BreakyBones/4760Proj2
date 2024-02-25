@@ -12,16 +12,14 @@ const int sh_key = 205569;
 
 
 int main(int argc, char *argv[]) {
-    int shm_id;
 
-
-    shm_id = shmget(sh_key, sizeof(int) * 2, 0644);
+    int shm_id = shmget(sh_key, sizeof(int) * 2, 0644);
     if (shm_id == -1) {
         perror("Error getting shared memory");
         return 1;
     }
 
-    int* system_clock = (int*)shmat(shm_id , NULL, 0);
+    int* system_clock = (int*)shmat(shm_id , 0, 0);
     if (system_clock == (void *) -1) {
         perror("Error attaching shared memory");
         return 1;

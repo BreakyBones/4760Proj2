@@ -26,6 +26,7 @@ const int sh_key = 205569;
 
 
 // clock incrementation
+int shm_id;
 int* system_clock;
 void incrementClock(int* clock , int nano) {
     clock[1] += nano;
@@ -94,27 +95,6 @@ int main(int argc, char *argv[]) {
 
 
     // TEST: INFINITE LOOP TO TEST CLOCK DELETE THIS LATER
-
-    // initialize the system clock
-    int shm_id;
-
-
-    // Create or get the shared memory segment
-    shm_id = shmget(sh_key, sizeof(int) * 2, 0644 | IPC_CREAT);
-    if (shm_id == -1) {
-        perror("Error creating/getting shared memory");
-        return 1;
-    }
-
-    // Attach the shared memory segment to the address space
-    system_clock = (int*)shmat(shm_id, 0, 0);
-    if (system_clock == (void *)(-1)) {
-        perror("Error attaching shared memory");
-        return 1;
-    }
-
-
-
     // TEST: SYSTEM CLOCK USAGE DELETE THIS LATER
 
     // OPTARGS
@@ -167,13 +147,30 @@ int main(int argc, char *argv[]) {
         return(EXIT_FAILURE);
     }
 
-    // TEST: GETOPT GRABS DELETE THIS LATER
+    // initialize the system clock
+
+
+
+    // Create or get the shared memory segment
+    shm_id = shmget(sh_key, sizeof(int) * 2, 0644 | IPC_CREAT);
+    if (shm_id == -1) {
+        perror("Error creating/getting shared memory");
+        return 1;
+    }
+
+    // Attach the shared memory segment to the address space
+    system_clock = (int*)shmat(shm_id, 0, 0);
+    if (system_clock == (void *) -1) {
+        perror("Error attaching shared memory");
+        return 1;
+    }
+
+    system_clock[0] = 0;
+    system_clock[1] = 1;
 
     // Pass to forked Worker and setup clock
     int workerLaunch = 0;
     int activeUsers = 0;
-    system_clock[0] = 0;
-    system_clock[1] = 0;
 
     while (workerLaunch < arg_n) {
         incrementClock(system_clock , 10);
