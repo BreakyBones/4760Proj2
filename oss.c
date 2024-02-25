@@ -139,8 +139,14 @@ int main(int argc, char *argv[]) {
         return(EXIT_FAILURE);
     }
 
-    // initialize the system clock
-
+    // initialize PCB
+    struct PCB pcb[arg_n];
+    for (int i = 0; i < arg_n; i++) {
+        pcb[i].occupied = 0;
+        pcb[i].pid = 0;
+        pcb[i].startSeconds = 0;
+        pcb[i].startNano = 0;
+    }
 
 
     // Create or get the shared memory segment
@@ -163,8 +169,13 @@ int main(int argc, char *argv[]) {
 
     // Pass to forked Worker and setup clock
     int workerLaunch = 0;
-    int activeUsers = 0;
+    int activeWorkers = 0;
     int activeChildren = 1;
+    int releaseTimeS = system_clock[0];
+    int releaseTimeN = system_clock[1] + arg_i;
+    if (releaseTimeN >= 1000000000) {
+        releaseTimeS++;
+    }
     while (activeChildren) {
         system_clock[1] += 1000;
         if (system_clock[1] >= 1000000000) {
@@ -172,9 +183,18 @@ int main(int argc, char *argv[]) {
             system_clock[1] -= 1000000000;
         }
         if (system_clock[1] % 500000000 == 0) {
-            printf("Process Table Goes Here");
+            printf("OSS PID:%d SysClockS: %d SysClockNano: %d\nProcess Table:" , getpid() , system_clock[0] , system_clock[1]);
+            printf("Entry\tOccupied\tPID\tStartS\tStartN\n");
+            for (int i = 0; i < arg_n; i++) {
+                printf("%d\t%d\t%d\t%d\t%d\n" , i , pcb[i].occupied , pcb[i].pid , pcb[i].startSeconds , pcb[i].startNano);
+            }
         }
-        if (activeUsers < arg_s) {
+        if (activeWorkers < arg_s && (system_clock[0] >= releaseTimeS && system_clock[1] >= releaseTimeN)) {
+            releaseTimeS = system_clock[0];
+            releaseTimeN = system_clock[1] + arg_i;
+            if (releaseTimeN >= 1000000000) {
+                releaseTimeS++;
+            }
             pid_t workPid = fork();
             if (workPid == 0) {
                 // Randomize the outgoing seconds and nanoseconds
@@ -185,8 +205,6 @@ int main(int argc, char *argv[]) {
                 char rand_tNs_str[20];
                 snprintf(rand_tS_str, sizeof(rand_tS_str), "%d" , rand_tS);
                 snprintf(rand_tNs_str, sizeof(rand_tNs_str), "%d" , rand_tNs);
-
-                printf("Forking now current clock: %d %d\n" , system_clock[0] , system_clock[1]);
                 char* args[] = {"./worker" , rand_tS_str , rand_tNs_str , 0};
                 execvp(args[0] , args);
                 perror("Error in execvp launching");
@@ -195,9 +213,17 @@ int main(int argc, char *argv[]) {
                 perror("Error in fork of worker process");
                 exit(EXIT_FAILURE);
             } else {
-                printf("Update PCB here\n");
-                activeUsers++;
-
+                for (int i = 0; i < arg_n; i++) {
+                    if (pcb[i].occupied == 0) {
+                        pcb[i].occupied = 1;
+                        pcb[i].pid = workPid;
+                        pcb[i].startSeconds = system_clock[0];
+                        pcb[i].startNano = system_clock[1];
+                        activeWorkers++;
+                        workerLaunch++;
+                        break;
+                    }
+                }
             }
         }
 
@@ -205,11 +231,12 @@ int main(int argc, char *argv[]) {
         //check for child termination
         int pid = waitpid(-1 , &status, WNOHANG);
         if (pid > 0) {
-            activeUsers--;
-            if (workerLaunch >= arg_n || activeUsers == 0) {
-                activeChildren = 0;
-                printf("Exiting\n");
-                break;
+            for (int i = 0; i < arg_n; i++) {
+                if (pcb[i].pid == pid) {
+                    pcb[i].occupied = 0;
+                    activeChildren--;
+                    break;
+                }
             }
         }
     }
