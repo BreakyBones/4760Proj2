@@ -213,7 +213,6 @@ int main(int argc, char *argv[]) {
                 activeChildren = 0;
             }
         }
-        usleep(100);
     }
 
     sleep(1);
