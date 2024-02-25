@@ -9,6 +9,7 @@
 #include <sys/shm.h>
 #include <sys/wait.h>
 
+
 // Set up the PCB according to what was given in the instructions
 struct PCB {
     int occupied;
@@ -68,7 +69,7 @@ void print_usage(const char *progName) {
 }
 
 int main(int argc, char *argv[]) {
-
+    srand(time(NULL));
     // Opt variable and Opt String
     char opt;
     const char optstr[] = "hn:s:t:i:";
@@ -162,7 +163,13 @@ int main(int argc, char *argv[]) {
     }
 
     // TEST: GETOPT GRABS DELETE THIS LATER
-    printf("arg_n: %d\n arg_s: %d\n arg_t: %s\n arg_i: %d\n" , arg_n , arg_s , arg_t , arg_i);
+
+    // Randomize seconds and nanoseconds between 1 and t
+    char rand_tS = rand() % atoi(arg_t) + 1;
+    char rand_tNs = rand() % 1000000000 + 1;
+
+    // TEST: print out the randomized seconds and nanoseconds
+    printf("TESTING Seconds: %s\nNanoseconds: %s" , rand_tS , rand_tNs);
 
     // Detach the shared memory segment
     if (shmdt(system_clock) == -1) {
