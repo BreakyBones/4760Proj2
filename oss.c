@@ -176,12 +176,12 @@ int main(int argc, char *argv[]) {
     // Pass to forked Worker and setup clock
     int workerLaunch = 0;
     int activeWorkers = 0;
-    int activeChildren = 1;
+
 
     int releaseTimeS = system_clock[0] + arg_iS;
     int releaseTimeN = system_clock[1] + arg_iN;
 
-    while (activeChildren) {
+    while (workerLaunch < arg_n) {
         system_clock[1] += 1000;
         if (system_clock[1] >= 1000000000) {
             system_clock[0]++;
@@ -202,7 +202,6 @@ int main(int argc, char *argv[]) {
                 // Randomize the outgoing seconds and nanoseconds
                 int rand_tS = rand() % atoi(arg_t) + 1;
                 int rand_tNs = rand() % 1000000000 + 1;
-
                 char rand_tS_str[20];
                 char rand_tNs_str[20];
                 snprintf(rand_tS_str, sizeof(rand_tS_str), "%d" , rand_tS);
@@ -216,6 +215,7 @@ int main(int argc, char *argv[]) {
                 exit(EXIT_FAILURE);
             } else {
                 for (int i = 0; i < arg_n; i++) {
+                    printf("making PID");
                     if (pcb[i].occupied == 0) {
                         pcb[i].occupied = 1;
                         pcb[i].pid = workPid;
@@ -236,7 +236,7 @@ int main(int argc, char *argv[]) {
             for (int i = 0; i < arg_n; i++) {
                 if (pcb[i].pid == pid) {
                     pcb[i].occupied = 0;
-                    activeChildren--;
+                    activeWorkers--;
                     break;
                 }
             }
