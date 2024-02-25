@@ -189,6 +189,7 @@ int main(int argc, char *argv[]) {
                 snprintf(rand_tS_str, sizeof(rand_tS_str), "%d" , rand_tS);
                 snprintf(rand_tNs_str, sizeof(rand_tNs_str), "%d" , rand_tNs);
 
+                printf("Forking now current clock: %d %d\n" , system_clock[0] , system_clock[1]);
                 char* args[] = {"./worker" , rand_tS_str , rand_tNs_str , 0};
                 execvp(args[0] , args);
                 perror("Error in execvp launching");
