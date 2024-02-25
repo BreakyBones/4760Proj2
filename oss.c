@@ -190,6 +190,7 @@ int main(int argc, char *argv[]) {
                 snprintf(rand_tNs_str, sizeof(rand_tNs_str), "%d" , rand_tNs);
 
                 printf("Forking now current clock: %d %d\n" , system_clock[0] , system_clock[1]);
+                printf("ShmID: %d\n" , shm_id);
                 char* args[] = {"./worker" , rand_tS_str , rand_tNs_str , 0};
                 execvp(args[0] , args);
                 perror("Error in execvp launching");
@@ -198,10 +199,9 @@ int main(int argc, char *argv[]) {
                 perror("Error in fork of worker process");
                 exit(EXIT_FAILURE);
             } else {
-                printf("Update PCB here");
+                printf("Update PCB here\n");
                 activeUsers++;
                 workerLaunch++;
-
             }
         }
 
