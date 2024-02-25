@@ -41,7 +41,6 @@ int main(int argc, char *argv[]) {
     printf("%d" , system_clock[0]);
 
     while(shutdown) {
-        printf("S: %d" , system_clock[0]);
         if (system_clock[0] >= runtimeS) {
             printf("WORKER PID:%d PPID%d SysClockS: %d SysClockNano: %d TermTimeS: %d TermTimeNano: %d\n --Terminating\n" , getpid() , getppid() , system_clock[0], system_clock[1], runtimeS, runtimeNs);
             shutdown = 0;
