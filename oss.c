@@ -23,7 +23,7 @@ struct PCB processTable[20];
 
 // Shared memory Key just an arbitrary number I picked
 const int sh_key = 205569;
-const int sh_size = sizeof(struct timespec);
+
 
 // clock incrementation
 // discovered timespec online through a question asking about simulating a clock
@@ -75,6 +75,7 @@ int main(int argc, char *argv[]) {
     // Opt variable and Opt String
     char opt;
     const char optstr[] = "hn:s:t:i:";
+    int status;
 
     // Variables to hold values from Optstr
     int arg_n = 0;
@@ -100,14 +101,14 @@ int main(int argc, char *argv[]) {
     struct timespec *system_clock;
 
     // Create or get the shared memory segment
-    shm_id = shmget(sh_key, sh_size, IPC_CREAT|0666);
+    shm_id = shmget(sh_key, sizeof(int) * 2, 0644 | IPC_CREAT);
     if (shm_id == -1) {
         perror("Error creating/getting shared memory");
         return 1;
     }
 
     // Attach the shared memory segment to the address space
-    system_clock = (struct timespec *)shmat(shm_id, NULL, 0);
+    system_clock = (struct timespec *)shmat(shm_id, 0, 0);
     if (system_clock == (struct timespec *)(-1)) {
         perror("Error attaching shared memory");
         return 1;
@@ -206,7 +207,14 @@ int main(int argc, char *argv[]) {
                 break;
             }
         }
+
+        //check for child termination
+        int pid = waitpid(-1 , &status, WNOHANG);
+        if (pid > 0) {
+
+        }
     }
+
 
 
     // Detach the shared memory segment

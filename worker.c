@@ -9,17 +9,14 @@
 #include <sys/shm.h>
 
 const int sh_key = 205569;
-const int sh_size = sizeof(struct timespec);
+
 
 int main(int argc, char *argv[]) {
     int shm_id;
     struct timespec *system_clock;
 
-    // Arguments
-    int runtimeS = (int) (system_clock->tv_sec + (argv[1]));
-    int runtimeNs = (int) (system_clock->tv_nsec + (argv[2]));
 
-    shm_id = shmget(sh_key, sh_size, 0666);
+    shm_id = shmget(sh_key, sizeof(int) * 2, 0644);
     if (shm_id == -1) {
         perror("Error getting shared memory");
         return 1;
@@ -30,6 +27,10 @@ int main(int argc, char *argv[]) {
         perror("Error attaching shared memory");
         return 1;
     }
+
+    // Arguments
+    int runtimeS = (int) (system_clock->tv_sec + atoi(argv[1]));
+    int runtimeNs = (int) (system_clock->tv_nsec + atoi(argv[2]));
 
     // Print Starting Line
     printf("WORKER PID:%d PPID%d SysClockS: %lld SysClockNano: %ld TermTimeS: %d TermTimeNano: %d\n --Just Starting\n" , getpid() , getppid() , system_clock->tv_sec, system_clock->tv_nsec, runtimeS, runtimeNs);
