@@ -210,10 +210,7 @@ int main(int argc, char *argv[]) {
                 execvp(args[0] , args);
                 perror("Error in execvp launching");
                 exit(EXIT_FAILURE);
-            } else if(workPid == -1) {
-                perror("Error in fork of worker process");
-                exit(EXIT_FAILURE);
-            } else {
+            }  else {
                 for (int i = 0; i < arg_n; i++) {
                     printf("making PID");
                     if (pcb[i].occupied == 0) {
