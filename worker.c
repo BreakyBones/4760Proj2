@@ -37,6 +37,9 @@ int main(int argc, char *argv[]) {
     int shutdown = 1;
     int currentTime = system_clock[0];
     int secondTracker = 0;
+
+    printf("%d" , system_clock[0]);
+
     while(shutdown) {
         printf("S: %d" , system_clock[0]);
         if (system_clock[0] >= runtimeS) {
