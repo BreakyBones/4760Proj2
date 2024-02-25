@@ -187,8 +187,8 @@ int main(int argc, char *argv[]) {
             system_clock[0]++;
             system_clock[1] -= 1000000000;
         }
-        if (system_clock[1] % 500000000 == 0) {
-            printf("OSS PID:%d SysClockS: %d SysClockNano: %d\nProcess Table:" , getpid() , system_clock[0] , system_clock[1]);
+        if (system_clock[1] == 500000000) {
+            printf("OSS PID:%d SysClockS: %d SysClockNano: %d\nProcess Table:\n" , getpid() , system_clock[0] , system_clock[1]);
             printf("Entry\tOccupied\tPID\tStartS\tStartN\n");
             for (int i = 0; i < arg_n; i++) {
                 printf("%d\t%d\t%d\t%d\t%d\n" , i , pcb[i].occupied , pcb[i].pid , pcb[i].startSeconds , pcb[i].startNano);
