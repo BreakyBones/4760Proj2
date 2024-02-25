@@ -27,13 +27,6 @@ struct PCB processTable[20];
 // clock incrementation
 int shm_id;
 int* system_clock;
-void incrementClock(int* clock , int nano) {
-    clock[1] += nano;
-    if (clock[1] >= 1000000000) {
-        clock[0] ++;
-        clock[1] -= 1000000000;
-    }
-}
 
 // Set up the failsafe shutdown
 static void myHandler(int s) {
@@ -173,7 +166,11 @@ int main(int argc, char *argv[]) {
     int activeUsers = 0;
     int activeChildren = 1;
     while (activeChildren) {
-        incrementClock(system_clock , 10);
+        system_clock[1] += 10;
+        if (system_clock[1] >= 1000000000) {
+            system_clock[0]++;
+            system_clock[1] -= 1000000000;
+        }
         printf("Seconds: %d\n" , system_clock[0]);
         if (system_clock[1] % 500000000 == 0) {
             printf("Process Table Goes Here");
