@@ -171,8 +171,8 @@ int main(int argc, char *argv[]) {
     // Pass to forked Worker and setup clock
     int workerLaunch = 0;
     int activeUsers = 0;
-
-    while (workerLaunch < arg_n) {
+    int activeChildren = 1;
+    while (activeChildren) {
         incrementClock(system_clock , 10);
         if (system_clock[1] % 500000000 == 0) {
             printf("Process Table Goes Here");
@@ -200,7 +200,7 @@ int main(int argc, char *argv[]) {
             } else {
                 printf("Update PCB here\n");
                 activeUsers++;
-                workerLaunch++;
+
             }
         }
 
@@ -209,6 +209,9 @@ int main(int argc, char *argv[]) {
         int pid = waitpid(-1 , &status, WNOHANG);
         if (pid > 0) {
             activeUsers--;
+            if (workerLaunch >= arg_n || activeUsers == 0) {
+                activeChildren = 0;
+            }
         }
         usleep(100);
     }

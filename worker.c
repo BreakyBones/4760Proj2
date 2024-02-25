@@ -14,7 +14,6 @@
 int main(int argc, char *argv[]) {
 
     int shm_id = shmget(SHMKEY, sizeof(int) * 2, 0666);
-    printf("ShmID: %d\n" , shm_id);
     if (shm_id == -1) {
         perror("Error getting shared memory huh?");
         return 1;
@@ -25,7 +24,6 @@ int main(int argc, char *argv[]) {
         perror("Error attaching shared memory");
         return 1;
     }
-
 
 
     // Arguments
