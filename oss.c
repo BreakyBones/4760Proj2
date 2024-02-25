@@ -213,7 +213,7 @@ int main(int argc, char *argv[]) {
         usleep(100);
     }
 
-
+    sleep(1);
 
     // Detach the shared memory segment
     if (shmdt(system_clock) == -1) {
