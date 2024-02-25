@@ -174,7 +174,7 @@ int main(int argc, char *argv[]) {
     int releaseTimeS = system_clock[0];
     int releaseTimeN = system_clock[1] + arg_i;
     if (releaseTimeN >= 1000000000) {
-        releaseTimeS++;
+        releaseTimeS += (releaseTimeN/1000000000);
     }
     while (activeChildren) {
         system_clock[1] += 1000;
