@@ -166,11 +166,11 @@ int main(int argc, char *argv[]) {
     // TEST: GETOPT GRABS DELETE THIS LATER
 
     // Randomize seconds and nanoseconds between 1 and t
-    int rand_tS = rand() % atoi(arg_t) + 1;
-    int rand_tNs = rand() % 1000000000 + 1;
+    char rand_tS = rand() % atoi(arg_t) + 1;
+    char rand_tNs = rand() % 1000000000 + 1;
 
     // TEST: print out the randomized seconds and nanoseconds
-    printf("TESTING Seconds: %d\nNanoseconds: %d" , rand_tS , rand_tNs);
+    printf("TESTING Seconds: %c\nNanoseconds: %c" , rand_tS , rand_tNs);
 
     // Detach the shared memory segment
     if (shmdt(system_clock) == -1) {
