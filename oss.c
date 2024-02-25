@@ -201,7 +201,7 @@ int main(int argc, char *argv[]) {
                 printf("Update PCB here");
                 activeUsers++;
                 workerLaunch++;
-                break;
+
             }
         }
 
