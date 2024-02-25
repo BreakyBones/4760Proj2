@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
     int secondTracker = 0;
     while(shutdown) {
 
-        if (runtimeS - system_clock[0] <= 0 && runtimeNs - system_clock[1] <= 0) {
+        if (runtimeS >= system_clock[0] && runtimeNs >= system_clock[1]) {
             printf("WORKER PID:%d PPID%d SysClockS: %d SysClockNano: %d TermTimeS: %d TermTimeNano: %d\n --Terminating\n" , getpid() , getppid() , system_clock[0], system_clock[1], runtimeS, runtimeNs);
             shutdown = 0;
         } else if (system_clock[0] - currentTime >= 1) {
