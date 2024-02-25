@@ -171,7 +171,6 @@ int main(int argc, char *argv[]) {
             system_clock[0]++;
             system_clock[1] -= 1000000000;
         }
-        printf("Seconds: %d\n" , system_clock[0]);
         if (system_clock[1] % 500000000 == 0) {
             printf("Process Table Goes Here");
         }

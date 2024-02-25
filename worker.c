@@ -35,18 +35,16 @@ int main(int argc, char *argv[]) {
 
 
     int shutdown = 1;
-    int currentTime = system_clock[0];
+    int currentTimeS = system_clock[0];
     int secondTracker = 0;
 
-    printf("%d" , system_clock[0]);
-
     while(shutdown) {
-        if (system_clock[0] >= runtimeS) {
+        if (system_clock[0] >= runtimeS || system_clock[1] >= runtimeNs) {
             printf("WORKER PID:%d PPID%d SysClockS: %d SysClockNano: %d TermTimeS: %d TermTimeNano: %d\n --Terminating\n" , getpid() , getppid() , system_clock[0], system_clock[1], runtimeS, runtimeNs);
             shutdown = 0;
-        } else if (system_clock[0] - currentTime >= 1) {
+        } else if (system_clock[0] - currentTimeS >= 1) {
             secondTracker++;
-            currentTime = system_clock[0];
+            currentTimeS = system_clock[0];
             printf("WORKER PID:%d PPID%d SysClockS: %d SysClockNano: %d TermTimeS: %d TermTimeNano: %d\n --%d second(s) have passed since starting\n" , getpid() , getppid() , system_clock[0], system_clock[1], runtimeS, runtimeNs, secondTracker);
         }
     }
