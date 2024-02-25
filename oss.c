@@ -208,7 +208,9 @@ int main(int argc, char *argv[]) {
         }
 
 
-        if (activeWorkers < arg_s) {
+        if (activeWorkers < arg_s && (system_clock[0] >= releaseTimeS && system_clock[1] >= releaseTimeN)) {
+            releaseTimeS = system_clock[0] + arg_iS;
+            releaseTimeN = system_clock[1] + arg_iN;
             pid_t workPid = fork();
             if (workPid == 0) {
                 // Randomize the outgoing seconds and nanoseconds
@@ -220,10 +222,7 @@ int main(int argc, char *argv[]) {
                 snprintf(rand_tNs_str, sizeof(rand_tNs_str), "%d" , rand_tNs);
                 char* args[] = {"./worker" , rand_tS_str , rand_tNs_str , 0};
                 execvp(args[0] , args);
-                perror("Error in execvp launching");
-                exit(EXIT_FAILURE);
-            }  else {
-                printf("test");
+
                 for (int i = 0; i < arg_n; i++) {
                     printf("making PID");
                     if (pcb[i].occupied == 0) {
@@ -233,11 +232,12 @@ int main(int argc, char *argv[]) {
                         pcb[i].startNano = system_clock[1];
                         activeWorkers++;
                         workerLaunch++;
-                        printf("AHHHH");
                         break;
                     }
                 }
 
+                perror("Error in execvp launching");
+                exit(EXIT_FAILURE);
             }
         }
 
