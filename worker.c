@@ -13,7 +13,7 @@ const int sh_key = 205569;
 
 int main(int argc, char *argv[]) {
 
-    int shm_id = shmget(sh_key, sizeof(int) * 2, 0644);
+    int shm_id = shmget(sh_key, sizeof(int) * 2, 0666);
     printf("ShmID: %d\n" , shm_id);
     if (shm_id == -1) {
         perror("Error getting shared memory huh?");
@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
     }
 
     int* system_clock = (int*)shmat(shm_id , 0, 0);
-    if (system_clock == (void *) -1) {
+    if ((int)system_clock == -1) {
         perror("Error attaching shared memory");
         return 1;
     }

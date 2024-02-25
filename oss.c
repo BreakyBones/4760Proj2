@@ -152,15 +152,16 @@ int main(int argc, char *argv[]) {
 
 
     // Create or get the shared memory segment
-    shm_id = shmget(sh_key, sizeof(int) * 2, 0644 | IPC_CREAT);
+    shm_id = shmget(sh_key, sizeof(int) * 2, IPC_CREAT|0666);
+    printf("ShmID: %d\n" , shm_id);
     if (shm_id == -1) {
         perror("Error creating/getting shared memory");
         return 1;
     }
 
     // Attach the shared memory segment to the address space
-    system_clock = (int*)shmat(shm_id, 0, 0);
-    if (system_clock == (void *) -1) {
+    system_clock = (int*)shmat(shm_id, NULL, 0);
+    if ((int)system_clock == -1) {
         perror("Error attaching shared memory");
         return 1;
     }
@@ -190,7 +191,6 @@ int main(int argc, char *argv[]) {
                 snprintf(rand_tNs_str, sizeof(rand_tNs_str), "%d" , rand_tNs);
 
                 printf("Forking now current clock: %d %d\n" , system_clock[0] , system_clock[1]);
-                printf("ShmID: %d\n" , shm_id);
                 char* args[] = {"./worker" , rand_tS_str , rand_tNs_str , 0};
                 execvp(args[0] , args);
                 perror("Error in execvp launching");
