@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
         if (runtimeS - system_clock[0] <= 0 && runtimeNs - system_clock[1] <= 0) {
             printf("WORKER PID:%d PPID%d SysClockS: %d SysClockNano: %d TermTimeS: %d TermTimeNano: %d\n --Terminating\n" , getpid() , getppid() , system_clock[0], system_clock[1], runtimeS, runtimeNs);
             shutdown = 0;
-        } else if (system_clock[0] - currentTime == 1) {
+        } else if (system_clock[0] - currentTime >= 1) {
             secondTracker++;
             currentTime = system_clock[0];
             printf("WORKER PID:%d PPID%d SysClockS: %d SysClockNano: %d TermTimeS: %d TermTimeNano: %d\n --%d second(s) have passed since starting\n" , getpid() , getppid() , system_clock[0], system_clock[1], runtimeS, runtimeNs, secondTracker);
