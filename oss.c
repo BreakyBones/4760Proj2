@@ -169,7 +169,7 @@ int main(int argc, char *argv[]) {
     char rand_tNs = rand() % 1000000000 + 1;
 
     // TEST: print out the randomized seconds and nanoseconds
-    printf("TESTING Seconds: %s\nNanoseconds: %s" , rand_tS , rand_tNs);
+    printf("TESTING Seconds: %c\nNanoseconds: %c" , rand_tS , rand_tNs);
 
     // Detach the shared memory segment
     if (shmdt(system_clock) == -1) {
