@@ -173,8 +173,8 @@ int main(int argc, char *argv[]) {
     int activeUsers = 0;
     int activeChildren = 1;
     while (activeChildren) {
-        printf("ticking clock");
         incrementClock(system_clock , 10);
+        printf("Seconds: %d\n" , system_clock[0]);
         if (system_clock[1] % 500000000 == 0) {
             printf("Process Table Goes Here");
         }
