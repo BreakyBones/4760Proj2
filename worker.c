@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
     printf("WORKER PID:%d PPID%d SysClockS: %d SysClockNano: %d TermTimeS: %d TermTimeNano: %d\n --Just Starting\n" , getpid() , getppid() , system_clock[0], system_clock[1], runtimeS, runtimeNs);
 
 
-    int shutdown = 0;
+    int shutdown = 1;
     int currentTime = system_clock[0];
     int secondTracker = 0;
     while(shutdown) {
