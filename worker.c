@@ -25,6 +25,8 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+
+/*
     // Arguments
     int runtimeS = (int) (system_clock[0] + atoi(argv[1]));
     int runtimeNs = (int) (system_clock[1] + atoi(argv[2]));
@@ -52,7 +54,7 @@ int main(int argc, char *argv[]) {
         perror("Error detaching shared memory");
         return 1;
     }
-
+*/
     return 0;
 
 }
