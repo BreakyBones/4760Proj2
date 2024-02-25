@@ -69,6 +69,7 @@ void print_usage(const char *progName) {
     printf("-i: How often a worker should be launched (in milliseconds)\n");
 }
 
+
 int main(int argc, char *argv[]) {
     srand(time(NULL));
     // Opt variable and Opt String
@@ -80,6 +81,7 @@ int main(int argc, char *argv[]) {
     int arg_s = 0;
     char *arg_t;
     int arg_i = 0;
+
 
     if (setupinterrupt() == -1) {
         perror("Failed to set up handler for SIGPROF");
@@ -110,6 +112,8 @@ int main(int argc, char *argv[]) {
         perror("Error attaching shared memory");
         return 1;
     }
+
+
 
     // TEST: SYSTEM CLOCK USAGE DELETE THIS LATER
 
@@ -165,24 +169,45 @@ int main(int argc, char *argv[]) {
 
     // TEST: GETOPT GRABS DELETE THIS LATER
 
-    // Randomize seconds and nanoseconds between 1 and t
-    int rand_tS = rand() % atoi(arg_t) + 1;
-    int rand_tNs = rand() % 1000000000 + 1;
+    // Pass to forked Worker and setup clock
+    int workerLaunch = 0;
+    int activeUsers = 0;
+    system_clock->tv_sec = 0;
+    system_clock->tv_nsec = 0;
 
-    char rand_tS_str[20];
-    char rand_tNs_str[20];
-    snprintf(rand_tS_str, sizeof(rand_tS_str), "%d" , rand_tS);
-    snprintf(rand_tNs_str, sizeof(rand_tNs_str), "%d" , rand_tNs);
+    while (workerLaunch < arg_n) {
+        incrementClock(system_clock , 10);
+        if (system_clock->tv_nsec % 500000000 == 0) {
+            printf("Process Table Goes Here");
+        }
+        if (activeUsers < arg_s) {
+            pid_t workPid = fork();
+            if (workPid == 0) {
+                // Randomize the outgoing seconds and nanoseconds
+                int rand_tS = rand() % atoi(arg_t) + 1;
+                int rand_tNs = rand() % 1000000000 + 1;
 
-    // TEST: print out the randomized seconds and nanoseconds
+                char rand_tS_str[20];
+                char rand_tNs_str[20];
+                snprintf(rand_tS_str, sizeof(rand_tS_str), "%d" , rand_tS);
+                snprintf(rand_tNs_str, sizeof(rand_tNs_str), "%d" , rand_tNs);
 
-    // Pass to forked Worker
-    pid_t childPid = fork();
-
-    if (childPid == 0) {
-        char* args[] = {"./worker" , rand_tS_str , rand_tNs_str , 0};
-        execvp(args[0] , args);
+                char* args[] = {"./worker" , rand_tS_str , rand_tNs_str , 0};
+                execvp(args[0] , args);
+                perror("Error in execvp launching");
+                exit(EXIT_FAILURE);
+            } else if(workPid == -1) {
+                perror("Error in fork of worker process");
+                exit(EXIT_FAILURE);
+            } else {
+                printf("Update PCB here");
+                activeUsers++;
+                workerLaunch++;
+                break;
+            }
+        }
     }
+
 
     // Detach the shared memory segment
     if (shmdt(system_clock) == -1) {
