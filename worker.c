@@ -8,12 +8,12 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 
-const int sh_key = 205569;
+#define SHMKEY 2055695
 
 
 int main(int argc, char *argv[]) {
 
-    int shm_id = shmget(sh_key, sizeof(int) * 2, 0666);
+    int shm_id = shmget(SHMKEY, sizeof(int) * 2, 0666);
     printf("ShmID: %d\n" , shm_id);
     if (shm_id == -1) {
         perror("Error getting shared memory huh?");

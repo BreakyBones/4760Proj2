@@ -10,6 +10,7 @@
 #include <sys/shm.h>
 #include <sys/wait.h>
 
+#define SHMKEY 2055695
 
 // Set up the PCB according to what was given in the instructions
 struct PCB {
@@ -21,8 +22,6 @@ struct PCB {
 
 struct PCB processTable[20];
 
-// Shared memory Key just an arbitrary number I picked
-const int sh_key = 205569;
 
 
 // clock incrementation
@@ -152,7 +151,7 @@ int main(int argc, char *argv[]) {
 
 
     // Create or get the shared memory segment
-    shm_id = shmget(sh_key, sizeof(int) * 2, IPC_CREAT|0666);
+    shm_id = shmget(SHMKEY, sizeof(int) * 2, IPC_CREAT|0666);
     printf("ShmID: %d\n" , shm_id);
     if (shm_id == -1) {
         perror("Error creating/getting shared memory");
