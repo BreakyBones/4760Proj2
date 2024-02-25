@@ -182,7 +182,7 @@ int main(int argc, char *argv[]) {
     int releaseTimeN = system_clock[1] + arg_iN;
 
     while (workerLaunch < arg_n) {
-        system_clock[1] += 1000;
+        system_clock[1] += 10000;
         if (system_clock[1] >= 1000000000) {
             system_clock[0]++;
             system_clock[1] -= 1000000000;
@@ -194,6 +194,20 @@ int main(int argc, char *argv[]) {
                 printf("%d\t%d\t%d\t%d\t%d\n" , i , pcb[i].occupied , pcb[i].pid , pcb[i].startSeconds , pcb[i].startNano);
             }
         }
+
+        // Checking for child termination
+        int pid = waitpid(-1 , &status, WNOHANG);
+        if (pid > 0) {
+            for (int i = 0; i < arg_n; i++) {
+                if (pcb[i].pid == pid) {
+                    pcb[i].occupied = 0;
+                    activeWorkers--;
+                    break;
+                }
+            }
+        }
+
+
         if (activeWorkers < arg_s && (system_clock[0] >= releaseTimeS && system_clock[1] >= releaseTimeN)) {
             releaseTimeS = system_clock[0] + arg_iS;
             releaseTimeN = system_clock[1] + arg_iN;
@@ -227,17 +241,7 @@ int main(int argc, char *argv[]) {
         }
 
 
-        // Checking for child termination
-        int pid = waitpid(-1 , &status, WNOHANG);
-        if (pid > 0) {
-            for (int i = 0; i < arg_n; i++) {
-                if (pcb[i].pid == pid) {
-                    pcb[i].occupied = 0;
-                    activeWorkers--;
-                    break;
-                }
-            }
-        }
+
     }
 
     // Sleep to stop it from just running off right after it's done
