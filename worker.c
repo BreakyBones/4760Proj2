@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
 
     int shm_id = shmget(sh_key, sizeof(int) * 2, 0644);
     if (shm_id == -1) {
-        perror("Error getting shared memory");
+        perror("Error getting shared memory huh?");
         return 1;
     }
 
