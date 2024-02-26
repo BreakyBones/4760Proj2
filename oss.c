@@ -180,8 +180,8 @@ int main(int argc, char *argv[]) {
 
     int releaseTimeS = system_clock[0] + arg_iS;
     int releaseTimeN = system_clock[1] + arg_iN;
-
-    while (workerLaunch < arg_n) {
+    int clockTick = 1;
+    while (clockTick) {
         system_clock[1] += 1000;
         if (system_clock[1] >= 1000000000) {
             system_clock[0]++;
@@ -205,6 +205,10 @@ int main(int argc, char *argv[]) {
                     workerLaunch++;
                     break;
                 }
+            }
+            if (workerLaunch >= arg_n) {
+                clockTick = 0;
+                break;
             }
         }
 
