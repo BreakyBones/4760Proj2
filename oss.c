@@ -213,7 +213,7 @@ int main(int argc, char *argv[]) {
         }
 
 
-        if (activeWorkers < arg_s && system_clock[0] >= releaseTimeS && system_clock[1] >= releaseTimeN) {
+        if (activeWorkers < arg_s && system_clock[0] >= releaseTimeS && system_clock[1] >= releaseTimeN && workerLaunch < arg_n) {
             releaseTimeN = system_clock[1] + arg_iN;
             releaseTimeS = system_clock[0] + arg_iS;
             pid_t workPid = fork();
