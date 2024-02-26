@@ -208,8 +208,8 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        // didn't work
-        if (activeWorkers < arg_s) {
+
+        if (activeWorkers < arg_s && system_clock[0] >= releaseTimeS && system_clock[1] >= releaseTimeN) {
             pid_t workPid = fork();
             if (workPid == 0) {
                 // Randomize the outgoing seconds and nanoseconds huh
