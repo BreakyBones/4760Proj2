@@ -213,7 +213,7 @@ int main(int argc, char *argv[]) {
         }
 
 
-        if (activeWorkers < arg_s && system_clock[0] >= releaseTimeS && system_clock[1] >= releaseTimeN && workerLaunch < arg_n) {
+        if (activeWorkers < arg_s && system_clock[0] >= releaseTimeS && system_clock[1] >= releaseTimeN) {
             releaseTimeN = system_clock[1] + arg_iN;
             releaseTimeS = system_clock[0] + arg_iS;
             pid_t workPid = fork();
@@ -253,16 +253,8 @@ int main(int argc, char *argv[]) {
     sleep(1);
 
     // Detach the shared memory segment
-    if (shmdt(system_clock) == -1) {
-        perror("Error detaching shared memory");
-        return(EXIT_FAILURE);
-    }
-
-    // Remove the shared memory segment
-    if (shmctl(shm_id, IPC_RMID, NULL) == -1) {
-        perror("Error removing shared memory");
-        return(EXIT_FAILURE);
-    }
+    shmdt(system_clock);
+    shmctl(shm_id, IPC_RMID, NULL);
 
     return 0;
 }
