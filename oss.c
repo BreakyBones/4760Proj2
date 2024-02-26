@@ -183,7 +183,6 @@ int main(int argc, char *argv[]) {
 
     while (workerLaunch < arg_n) {
         system_clock[1] += 1000;
-        printf("%d\n" , system_clock[1]);
         if (system_clock[1] >= 1000000000) {
             system_clock[0]++;
             system_clock[1] -= 1000000000;
@@ -224,9 +223,8 @@ int main(int argc, char *argv[]) {
                 perror("Error in execvp launching");
                 exit(EXIT_FAILURE);
             }  else {
-                printf("test");
                 for (int i = 0; i < arg_n; i++) {
-                    printf("making PID");
+
                     if (pcb[i].occupied == 0) {
                         pcb[i].occupied = 1;
                         pcb[i].pid = workPid;
@@ -234,7 +232,6 @@ int main(int argc, char *argv[]) {
                         pcb[i].startNano = system_clock[1];
                         activeWorkers++;
                         workerLaunch++;
-                        printf("AHHHH");
                         break;
                     }
                 }
@@ -246,8 +243,6 @@ int main(int argc, char *argv[]) {
 
     }
 
-    // Sleep to stop it from just running off right after it's done
-    sleep(1);
 
     // Detach the shared memory segment
     if (shmdt(system_clock) == -1) {
