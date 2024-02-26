@@ -189,9 +189,9 @@ int main(int argc, char *argv[]) {
         }
         if (system_clock[1] == 500000001) {
             printf("OSS PID:%d SysClockS: %d SysClockNano: %d\nProcess Table:\n" , getpid() , system_clock[0] , system_clock[1]);
-            printf("Entry\tOccupied\t\tPID\tStartS\tStartN\n");
+            printf("Entry\tOccupied\tPID\tStartS\tStartN\n");
             for (int i = 0; i < arg_n; i++) {
-                printf("%d\t%d\t%d\t%d\t%d\n" , i , pcb[i].occupied , pcb[i].pid , pcb[i].startSeconds , pcb[i].startNano);
+                printf("%d\t%d\t\t%d\t%d\t%d\n" , i , pcb[i].occupied , pcb[i].pid , pcb[i].startSeconds , pcb[i].startNano);
             }
         }
 
@@ -202,6 +202,7 @@ int main(int argc, char *argv[]) {
                 if (pcb[i].pid == pid) {
                     pcb[i].occupied = 0;
                     activeWorkers--;
+                    workerLaunch++;
                     break;
                 }
             }
@@ -231,7 +232,6 @@ int main(int argc, char *argv[]) {
                         pcb[i].startSeconds = system_clock[0];
                         pcb[i].startNano = system_clock[1];
                         activeWorkers++;
-                        workerLaunch++;
                         break;
                     }
                 }
@@ -246,11 +246,6 @@ int main(int argc, char *argv[]) {
     // Sleep to stop it from just running off right after it's done
     sleep(1);
 
-    printf("OSS PID:%d SysClockS: %d SysClockNano: %d\nProcess Table:\n" , getpid() , system_clock[0] , system_clock[1]);
-    printf("Entry\tOccupied\t\tPID\tStartS\tStartN\n");
-    for (int i = 0; i < arg_n; i++) {
-        printf("%d\t%d\t%d\t%d\t%d\n", i, pcb[i].occupied, pcb[i].pid, pcb[i].startSeconds, pcb[i].startNano);
-    }
     // Detach the shared memory segment
     if (shmdt(system_clock) == -1) {
         perror("Error detaching shared memory");
