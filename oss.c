@@ -211,7 +211,7 @@ int main(int argc, char *argv[]) {
         if (activeWorkers < arg_s) {
             pid_t workPid = fork();
             if (workPid == 0) {
-                // Randomize the outgoing seconds and nanoseconds
+                // Randomize the outgoing seconds and nanoseconds huh
                 int rand_tS = rand() % atoi(arg_t) + 1;
                 int rand_tNs = rand() % 1000000000 + 1;
                 char rand_tS_str[20];
