@@ -183,7 +183,7 @@ int main(int argc, char *argv[]) {
 
     while (workerLaunch < arg_n) {
         system_clock[1] += 1000;
-        printf("%d" , system_clock[1]);
+        printf("%d\n" , system_clock[1]);
         if (system_clock[1] >= 1000000000) {
             system_clock[0]++;
             system_clock[1] -= 1000000000;
