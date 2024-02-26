@@ -195,17 +195,7 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        // Checking for child termination
-        int pid = waitpid(-1 , &status, WNOHANG);
-        if (pid > 0) {
-            for (int i = 0; i < arg_n; i++) {
-                if (pcb[i].pid == pid) {
-                    pcb[i].occupied = 0;
-                    activeWorkers--;
-                    break;
-                }
-            }
-        }
+
 
 
         if (activeWorkers < arg_s && (system_clock[0] >= releaseTimeS && system_clock[1] >= releaseTimeN)) {
@@ -238,10 +228,21 @@ int main(int argc, char *argv[]) {
 
                 perror("Error in execvp launching");
                 exit(EXIT_FAILURE);
+
             }
         }
 
-
+        // Checking for child termination
+        int pid = waitpid(-1 , &status, WNOHANG);
+        if (pid > 0) {
+            for (int i = 0; i < arg_n; i++) {
+                if (pcb[i].pid == pid) {
+                    pcb[i].occupied = 0;
+                    activeWorkers--;
+                    break;
+                }
+            }
+        }
 
     }
 
