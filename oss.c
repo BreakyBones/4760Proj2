@@ -243,6 +243,8 @@ int main(int argc, char *argv[]) {
 
     }
 
+    // Sleep to stop it from just running off right after it's done
+    sleep(1);
 
     // Detach the shared memory segment
     if (shmdt(system_clock) == -1) {
