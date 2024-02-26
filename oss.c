@@ -207,7 +207,7 @@ int main(int argc, char *argv[]) {
             }
         }
 
-
+        // didn't work
         if (activeWorkers < arg_s) {
             pid_t workPid = fork();
             if (workPid == 0) {
