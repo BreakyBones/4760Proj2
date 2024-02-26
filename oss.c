@@ -249,8 +249,8 @@ int main(int argc, char *argv[]) {
     printf("OSS PID:%d SysClockS: %d SysClockNano: %d\nProcess Table:\n" , getpid() , system_clock[0] , system_clock[1]);
     printf("Entry\tOccupied\t\tPID\tStartS\tStartN\n");
     for (int i = 0; i < arg_n; i++) {
-        printf("%d\t%d\t%d\t%d\t%d\n" , i , pcb[i].occupied , pcb[i].pid , pcb[i].startSeconds , pcb[i].startNano);
-
+        printf("%d\t%d\t%d\t%d\t%d\n", i, pcb[i].occupied, pcb[i].pid, pcb[i].startSeconds, pcb[i].startNano);
+    }
     // Detach the shared memory segment
     if (shmdt(system_clock) == -1) {
         perror("Error detaching shared memory");
